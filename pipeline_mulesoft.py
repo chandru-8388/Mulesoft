@@ -1,16 +1,29 @@
 """
-pipeline_mulesoft.py
---------------------
-Reads the MuleSoft pipeline template (template_mulesoft.json) and a config file
-(config_mulesoft.json), substitutes the {{placeholders}}, and creates the
-pipeline in Opsera via the Create Pipeline API.
+pipeline_mulesoft_bulk.py
+-------------------------
+Creates 10 MuleSoft pipelines in a single run via the Opsera Create Pipeline API.
 
-Stored in SCM and executed by the Opsera Job-Engine step.
+Each pipeline gets a GUARANTEED-UNIQUE name by appending a run timestamp and an
+index (e.g., "NC-MuleSoft-20260724-1015-01"), so the API never rejects on
+duplicate names.
+
+Reads:  template_mulesoft.json  (pipeline template with {{placeholders}})
+        config_mulesoft.json    (base values for the placeholders)
+Env:    GITHUB_TOKEN            (Opsera API bearer token)
 """
 
 import requests
 import json
 import os
+from datetime import datetime
+
+# How many pipelines to create in one go
+PIPELINE_COUNT = 10
+
+# Base name prefix for all created pipelines
+BASE_NAME = "NC-MuleSoft"
+
+API_URL = "https://app.opsera.io/api/v1/pipeline/create"
 
 
 def replace_placeholders(obj, values):
@@ -26,15 +39,12 @@ def replace_placeholders(obj, values):
     return obj
 
 
-def create_pipeline(config_file, template_file):
-    """Build the API body from one config + template pair and POST to Opsera."""
-    with open(template_file, "r") as f:
+def main():
+    # Load template + base config once
+    with open("template_mulesoft.json", "r") as f:
         template_data = json.load(f)
-
-    with open(config_file, "r") as f:
-        config_values = json.load(f)
-
-    api_body = replace_placeholders(template_data, config_values)
+    with open("config_mulesoft.json", "r") as f:
+        base_config = json.load(f)
 
     token = os.environ["GITHUB_TOKEN"]
     headers = {
@@ -42,35 +52,33 @@ def create_pipeline(config_file, template_file):
         "Authorization": f"Bearer {token}",
     }
 
-    response = requests.post(
-        "https://app.opsera.io/api/v1/pipeline/create",
-        headers=headers,
-        json=api_body,
-    )
+    # Unique run stamp shared by this batch (date-time to the minute)
+    run_stamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
 
-    print(f"[{config_values.get('name', 'pipeline')}] "
-          f"Status: {response.status_code}")
-    print("Response:", response.text)
-    return response
+    success, failed = 0, 0
+    for i in range(1, PIPELINE_COUNT + 1):
+        cfg = dict(base_config)  # copy base values
+        # Guaranteed-unique pipeline name: prefix-timestamp-index
+        cfg["name"] = f"{BASE_NAME}-{run_stamp}-{i:02d}"
+
+        body = replace_placeholders(template_data, cfg)
+
+        try:
+            resp = requests.post(API_URL, headers=headers, json=body)
+            if resp.status_code == 200:
+                success += 1
+                new_id = resp.json().get("newPipelineId", "n/a")
+                print(f"[{cfg['name']}] Status: 200  ->  newPipelineId: {new_id}")
+            else:
+                failed += 1
+                print(f"[{cfg['name']}] Status: {resp.status_code}  ->  {resp.text[:200]}")
+        except Exception as e:
+            failed += 1
+            print(f"[{cfg['name']}] ERROR: {e}")
+
+    print("\n==== Summary ====")
+    print(f"Requested: {PIPELINE_COUNT} | Created: {success} | Failed: {failed}")
 
 
 if __name__ == "__main__":
-    # ---- Single MuleSoft pipeline creation ----
-    create_pipeline("config_mulesoft.json", "template_mulesoft.json")
-
-    # ---- Bulk creation (optional) ----
-    # Put a JSON array of config objects in configs_mulesoft_bulk.json and
-    # uncomment the block below to create multiple pipelines in one run:
-    #
-    # with open("configs_mulesoft_bulk.json") as f:
-    #     bulk_configs = json.load(f)
-    # with open("template_mulesoft.json") as f:
-    #     template_data = json.load(f)
-    # token = os.environ["GITHUB_TOKEN"]
-    # headers = {"Content-Type": "application/json",
-    #            "Authorization": f"Bearer {token}"}
-    # for cfg in bulk_configs:
-    #     body = replace_placeholders(template_data, cfg)
-    #     r = requests.post("https://app.opsera.io/api/v1/pipeline/create",
-    #                       headers=headers, json=body)
-    #     print(cfg.get("name"), "->", r.status_code)
+    main()
