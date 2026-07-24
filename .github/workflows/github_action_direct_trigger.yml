@@ -12,7 +12,7 @@ name: Create Opsera Pipeline (Direct API Trigger)
 on:
   push:
     branches:
-      - demo1        # change to your monitored branch
+      - main        # change to your monitored branch
   workflow_dispatch:  # allows manual runs for testing
 
 jobs:
