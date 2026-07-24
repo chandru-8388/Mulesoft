@@ -1,0 +1,47 @@
+###############################################################################
+# OPTIONAL - LOW-LATENCY ALTERNATIVE
+# Runs pipeline.py directly from a GitHub Actions runner instead of relying on
+# the Opsera webhook. This skips the webhook cache-and-poll wait (~1-3 min),
+# so pipeline creation is triggered immediately after the commit.
+#
+# Place this file at: .github/workflows/create-opsera-pipeline.yml
+# Add OPSERA_API_TOKEN as a repository secret (Settings -> Secrets -> Actions).
+###############################################################################
+name: Create Opsera Pipeline (Direct API Trigger)
+
+on:
+  push:
+    branches:
+      - demo1        # change to your monitored branch
+  workflow_dispatch:  # allows manual runs for testing
+
+jobs:
+  create-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install PyGithub requests
+
+      - name: Record start time
+        run: echo "START=$(date -u +%FT%T.%3NZ)" >> "$GITHUB_ENV"
+
+      - name: Run pipeline creation script
+        env:
+          # pipeline.py reads this as os.environ["GITHUB_TOKEN"]
+          GITHUB_TOKEN: ${{ secrets.OPSERA_API_TOKEN }}
+        working-directory: GitRepoCreation
+        run: python3 pipeline.py
+
+      - name: Record end time
+        run: |
+          echo "END=$(date -u +%FT%T.%3NZ)" >> "$GITHUB_ENV"
+          echo "Trigger start: $START"
+          echo "Trigger end:   $(date -u +%FT%T.%3NZ)"
