@@ -18,7 +18,7 @@ import os
 from datetime import datetime
 
 # How many pipelines to create in one go
-PIPELINE_COUNT = 10
+PIPELINE_COUNT = 3
 
 # Base name prefix for all created pipelines
 BASE_NAME = "NC-MuleSoft"
