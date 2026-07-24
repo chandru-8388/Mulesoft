@@ -37,7 +37,6 @@ jobs:
         env:
           # pipeline.py reads this as os.environ["GITHUB_TOKEN"]
           GITHUB_TOKEN: ${{ secrets.OPSERA_API_TOKEN }}
-        working-directory: GitRepoCreation
         run: python3 pipeline.py
 
       - name: Record end time
