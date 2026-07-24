@@ -1,0 +1,22 @@
+[
+  {
+    "name": "NC-MuleSoft-1",
+    "description": "Bulk test MuleSoft pipeline 1",
+    "repo": "Mulesoft",
+    "repoid": "chandru-8388/Mulesoft",
+    "giturl": "https://github.com/chandru-8388/Mulesoft",
+    "sshurl": "git@github.com:chandru-8388/Mulesoft.git",
+    "gitbranch": "main",
+    "step1name": "build"
+  },
+  {
+    "name": "NC-MuleSoft-2",
+    "description": "Bulk test MuleSoft pipeline 2",
+    "repo": "Mulesoft",
+    "repoid": "chandru-8388/Mulesoft",
+    "giturl": "https://github.com/chandru-8388/Mulesoft",
+    "sshurl": "git@github.com:chandru-8388/Mulesoft.git",
+    "gitbranch": "main",
+    "step1name": "build"
+  }
+]

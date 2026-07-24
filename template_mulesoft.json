@@ -1,0 +1,96 @@
+{
+  "name": "{{name}}",
+  "description": "{{description}}",
+  "account": "org109-acc",
+  "active": true,
+  "organizationName": "opsera protonmail test account",
+  "owner": "67d2c7c8a9ae2fbc474a5071",
+  "owner_name": "Chandru Nallasivam2",
+  "project": { "name": "", "project_id": "" },
+  "roles": [],
+  "tags": [],
+  "type": [],
+  "template": "5ec7c8cedc73d9532e860b67",
+  "templateIdentifier": "blank_pipeline_template",
+  "notification": [],
+  "notificationRules": [],
+  "workflow": {
+    "last_run": { "status": "reset" },
+    "last_step": { "check_count": 0, "status": "reset", "step_id": "" },
+    "plan": [
+      {
+        "_id": "6a5f775219a53956db6f6949",
+        "active": true,
+        "dependencies": [],
+        "description": "",
+        "name": "{{step1name}}",
+        "notification": [],
+        "orchestration_type": "standard",
+        "tags": [],
+        "tool": {
+          "tool_identifier": "build",
+          "job": null,
+          "configuration": {
+            "type": "MAVEN",
+            "configurationType": "Release",
+            "service": "github",
+            "gitBranch": "{{gitbranch}}",
+            "gitRepository": "{{repo}}",
+            "gitToolId": "6846decaee8c55ffd8184f09",
+            "gitUrl": "{{giturl}}",
+            "repoId": "{{repoid}}",
+            "sshUrl": "{{sshurl}}",
+            "spaceName": "XLARGE",
+            "dependencies": { "java": "17", "maven": "3.8.2" },
+            "dependencyType": [
+              {
+                "dependencyType": "java",
+                "name": "Java openJDK Version 17",
+                "version": "17"
+              },
+              {
+                "dependencyType": "maven",
+                "name": "Maven Version 3.8.2",
+                "version": "3.8.2"
+              }
+            ],
+            "resource": "https://management.azure.com",
+            "workspaceDeleteFlag": true,
+            "customMavenSettings": false,
+            "customScript": false,
+            "dynamicTag": false,
+            "enableBuildArgs": false,
+            "enableOutputVariables": false,
+            "enablePostBuildCommand": false,
+            "signArtifact": false,
+            "specifyCommitIdChar": false,
+            "commitIdCharDirection": "prefix",
+            "useBuildStepResource": false,
+            "useDockerDynamicName": false,
+            "validateAndUploadAppEnabled": false,
+            "buildArguments": [],
+            "customParameters": [],
+            "dockerSecrets": [],
+            "environmentVariables": [],
+            "outputCustomParameters": [],
+            "secondaryTags": []
+          }
+        },
+        "trigger": [],
+        "type": ["build"]
+      }
+    ],
+    "run_count": 0,
+    "schedule": { "end_date": null, "frequency": "", "start_date": null },
+    "source": {
+      "branch": "",
+      "branch_pattern": [],
+      "key": "",
+      "name": "",
+      "repository": "",
+      "secondary_branches": [],
+      "service": "",
+      "trigger_active": false
+    }
+  }
+}

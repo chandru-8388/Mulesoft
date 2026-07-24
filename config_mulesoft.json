@@ -1,0 +1,10 @@
+{
+  "name": "NC-MuleSoft",
+  "description": "Create a new template from scratch.",
+  "repo": "Mulesoft",
+  "repoid": "chandru-8388/Mulesoft",
+  "giturl": "https://github.com/chandru-8388/Mulesoft",
+  "sshurl": "git@github.com:chandru-8388/Mulesoft.git",
+  "gitbranch": "main",
+  "step1name": "build"
+}
