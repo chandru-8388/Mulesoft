@@ -26,5 +26,5 @@
 			<munit-tools:assert-equals doc:name='"Received a -1"' doc:id="cbdfcfdc-a9e4-427e-b078-76cceb4eb6d5" actual="#[payload]" expected='#["Received a -1"]' />
 		</munit:validation>
 	</munit:test>
-
+ 
 </mule>
